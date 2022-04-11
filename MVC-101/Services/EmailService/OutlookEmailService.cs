@@ -9,6 +9,8 @@ namespace MVC_101.Services.EmailService
 {
     public class OutlookEmailService : IEmailService
     {
+
+
         public string SenderMail => "wissen.akademie@outlook.com";
         public string Password => "1-9x2+abc";
         public string Smtp => "smtp-mail.outlook.com";
