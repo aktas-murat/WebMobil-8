@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVC-101", "MVC-101\MVC-101.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.Gün", "4.Gün", "{D353826F-B5FA-4A58-BA5C-716D63D462E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity101", "Identity101\Identity101.csproj", "{0010555D-196A-4E25-BEEC-3DE0A91AFF75}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity101", "Identity101\Identity101.csproj", "{0010555D-196A-4E25-BEEC-3DE0A91AFF75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
