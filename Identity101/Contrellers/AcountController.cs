@@ -8,11 +8,11 @@ using Identity101.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace Identity101.Controllers;
 
+[AllowAnonymous]
 public class AccountController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
@@ -161,6 +161,7 @@ public class AccountController : Controller
         {
             //TODO: 2fa yönlendirmesi yapılacak
         }
+
         ModelState.AddModelError(string.Empty, "Kullanıcı adı veya şifre hatalı");
         return View(model);
     }
@@ -170,12 +171,92 @@ public class AccountController : Controller
     {
         await _signInManager.SignOutAsync();
         return RedirectToAction("Index", "Home");
-
     }
 
     public IActionResult AccessDenied()
     {
         return View();
+    }
 
+    [HttpGet]
+    public IActionResult ResetPassword()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ResetPassword(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user == null)
+        {
+            ViewBag.Message = "Mailinize Şifre güncelleme yönergemiz gönderilmiştir";
+        }
+        else
+        {
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var callbackUrl = Url.Action("ConfirmResetPassword", "Account", new { userId = user.Id, code = code },
+                protocol: Request.Scheme);
+
+            var emailMessage = new MailModel()
+            {
+                To = new List<EmailModel>
+                {
+                    new EmailModel()
+                        { Adress = user.Email, Name = user.UserName }
+                },
+                Body =
+                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.",
+                Subject = "Reset Password"
+            };
+
+            await _emailService.SendMailAsync(emailMessage);
+
+            ViewBag.Message = "Mailinize Şifre güncelleme yönergemiz gönderilmiştir";
+        }
+
+        return View();
+    }
+    public IActionResult ConfirmResetPassword(string userId, string code)
+    {
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code))
+        {
+            return BadRequest("Hatalı istek");
+        }
+
+        ViewBag.Code = code;
+        ViewBag.UserId = userId;
+        return View();
+    }
+    [HttpPost]
+    public async Task<IActionResult> ConfirmResetPassword(ResetPasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var user = await _userManager.FindByIdAsync(model.UserId);
+
+        if (user == null)
+        {
+            ModelState.AddModelError(string.Empty, "Kullanıcı bulunamadı");
+            return View();
+        }
+        var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(model.Code));
+        var result = await _userManager.ResetPasswordAsync(user, code, model.NewPassword);
+
+        if (result.Succeeded)
+        {
+            //email gönder
+            TempData["Message"] = "Şifre değişikliğiniz gerçekleştirilmiştir";
+            return View();
+        }
+
+        var message = string.Join("<br>", result.Errors.Select(x => x.Description));
+        TempData["Message"] = message;
+        return View();
     }
 }
