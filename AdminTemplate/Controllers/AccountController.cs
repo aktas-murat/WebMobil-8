@@ -1,37 +1,32 @@
 ﻿using System.Text;
 using System.Text.Encodings.Web;
-using Identity101.Models.Email;
-using Identity101.Models.Identity;
-using Identity101.Models.Role;
-using Identity101.Services.Email;
-using Identity101.ViewModels;
+using AdminTemplate.Models.Email;
+using AdminTemplate.Models.Identity;
+using AdminTemplate.Models.Role;
+using AdminTemplate.Services.Email;
+using AdminTemplate.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Identity101.Controllers;
+namespace AdminTemplate.Controllers;
 
-[AllowAnonymous]
 public class AccountController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IEmailService _emailService;
     private readonly RoleManager<ApplicationRole> _roleManager;
+    private readonly IEmailService _emailService;
     private readonly SignInManager<ApplicationUser> _signInManager;
 
-    public AccountController(UserManager<ApplicationUser> userManager,
-        IEmailService emailService,
-        RoleManager<ApplicationRole> roleManager,
-        SignInManager<ApplicationUser> signInManager)
+    public AccountController(UserManager<ApplicationUser> userManager, IEmailService emailService, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager)
     {
         _userManager = userManager;
         _emailService = emailService;
-        _roleManager = roleManager;
         _signInManager = signInManager;
+        _roleManager = roleManager;
         CheckRoles();
     }
-
     private void CheckRoles()
     {
         foreach (var item in Roles.RoleList)
@@ -44,15 +39,13 @@ public class AccountController : Controller
             }).Result;
         }
     }
-
-
-    [HttpGet("~/kayit-ol")]
+    // GET
     public IActionResult Register()
     {
         return View();
     }
 
-    [HttpPost("~/kayit-ol")]
+    [HttpPost]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
         if (!ModelState.IsValid)
@@ -77,25 +70,25 @@ public class AccountController : Controller
             result = await _userManager.AddToRoleAsync(user, count == 1 ? Roles.Admin : Roles.Passive);
 
             //Email gönderme - Aktivasyon
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code },
-                protocol: Request.Scheme);
+            //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code },
+            //    protocol: Request.Scheme);
 
-            var email = new MailModel()
-            {
-                To = new List<EmailModel>
-                {
-                    new EmailModel()
-                        { Adress = user.Email, Name = user.UserName }
-                },
-                Body =
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.",
-                Subject = "Confirm your email"
-            };
+            //var email = new MailModel()
+            //{
+            //    To = new List<EmailModel>
+            //    {
+            //        new EmailModel()
+            //            { Adress = user.Email, Name = user.UserName }
+            //    },
+            //    Body =
+            //        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.",
+            //    Subject = "Confirm your email"
+            //};
 
-            await _emailService.SendMailAsync(email);
-            //TODO: Login olma
+            //await _emailService.SendMailAsync(email);
+            ////TODO: Login olma
             return RedirectToAction("Login");
         }
 
@@ -103,7 +96,6 @@ public class AccountController : Controller
         ModelState.AddModelError(string.Empty, messages);
         return View(model);
     }
-
     public async Task<IActionResult> ConfirmEmail(string userId, string code)
     {
         if (userId == null || code == null)
@@ -219,6 +211,7 @@ public class AccountController : Controller
 
         return View();
     }
+    [HttpGet]
     public IActionResult ConfirmResetPassword(string userId, string code)
     {
         if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code))
@@ -230,6 +223,7 @@ public class AccountController : Controller
         ViewBag.UserId = userId;
         return View();
     }
+
     [HttpPost]
     public async Task<IActionResult> ConfirmResetPassword(ResetPasswordViewModel model)
     {
@@ -245,6 +239,7 @@ public class AccountController : Controller
             ModelState.AddModelError(string.Empty, "Kullanıcı bulunamadı");
             return View();
         }
+
         var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(model.Code));
         var result = await _userManager.ResetPasswordAsync(user, code, model.NewPassword);
 
@@ -270,14 +265,13 @@ public class AccountController : Controller
         {
             Email = user.Email,
             Name = user.Name,
-            Surname = user.Surname,
+            Surname = user.Surname
         };
         return View(model);
     }
 
-    [Authorize,HttpPost]
-   
-    public async Task<IActionResult>Profile(UserProfileViewModel model)
+    [Authorize, HttpPost]
+    public async Task<IActionResult> Profile(UserProfileViewModel model)
     {
         if (!ModelState.IsValid)
             return View(model);
@@ -285,9 +279,8 @@ public class AccountController : Controller
         user.Name = model.Name;
         user.Surname = model.Surname;
 
-
         bool isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-        if (user.Email != model.Email && !isAdmin)
+        if (!isAdmin && user.Email != model.Email)
         {
             await _userManager.RemoveFromRoleAsync(user, Roles.User);
             await _userManager.AddToRoleAsync(user, Roles.Passive);
@@ -295,76 +288,35 @@ public class AccountController : Controller
 
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Scheme);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code },
+                protocol: Request.Scheme);
 
             var emailMessage = new MailModel()
             {
-                To = new List<EmailModel> { new EmailModel()
+                To = new List<EmailModel>
                 {
-                    Adress = user.Email,
-                    Name = user.Name
-                }},
-                Body = $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here </a>.",
+                    new() { Adress = model.Email, Name = user.Name }
+                },
+                Body =
+                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here </a>.",
                 Subject = "Confirm your email"
             };
-
             await _emailService.SendMailAsync(emailMessage);
         }
 
-        //user.Name = model.Name;
-        //user.Surname = model.Surname;
         user.Email = model.Email;
-
-
-
-        //TODO:eğer email değiştiyse.kullanıcının rolünü pasife çekip tekrar aktivasyon gönderilmelidir
         var result = await _userManager.UpdateAsync(user);
         if (result.Succeeded)
         {
             ViewBag.Message = "Güncelleme başarılı";
         }
-
         else
         {
             var message = string.Join("<br>", result.Errors.Select(x => x.Description));
             ViewBag.Message = message;
         }
+
         return View(model);
-
     }
-      
-      [HttpGet]
-
-      public IActionResult ChangePassword()
-    {
-        return View();
-
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
-
-    {
-        var name = HttpContext.User.Identity.Name;
-        var user = await _userManager.FindByNameAsync(name);
-        var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
-
-        if (result.Succeeded)
-        {
-            ViewBag.Message = "Güncelleme Başarılı";
-
-        }
-        else
-        {
-            var message = string.Join("<br>", result.Errors.Select(x => x.Description));
-            ViewBag.Message = message;
-        }
-        return View(model);
-
-    }
-
-
 }
-
-
 
