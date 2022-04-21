@@ -10,7 +10,6 @@ namespace Identity101.ViewModels
         [StringLength(100, MinimumLength = 6, ErrorMessage = "Şifreniz minimum 6 karakterli olmalıdır!")]
         [Display(Name = "Yeni Şifre")]
         [DataType(DataType.Password)]
-
         public string NewPassword { get; set; }
         [Required(ErrorMessage = "Şifre alanı gerekiyor")]
         [DataType(DataType.Password)]
