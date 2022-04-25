@@ -343,7 +343,7 @@ public class AccountController : Controller
 
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> Profile(UpdateProfilePasswordViewModel model)
+    public async Task<IActionResult> EditProfile(UpdateProfilePasswordViewModel model)
     {
 
         if (!ModelState.IsValid)

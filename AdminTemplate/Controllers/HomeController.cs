@@ -1,32 +1,31 @@
-﻿using AdminTemplate.Models;
+﻿using AdminTemplate.Data;
+using AdminTemplate.ViewModels;
+using AdminTemplate.ViewModels.Dashboard;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
-namespace AdminTemplate.Controllers
+namespace AdminTemplate.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly MyContext _context;
+    // GET
+    public HomeController(MyContext context)
     {
-        private readonly ILogger<HomeController> _logger;
+        _context = context;
+    }
 
-        public HomeController(ILogger<HomeController> logger)
+    public IActionResult Index()
+    {
+        var productReportViewModel = new ProductReportViewModel()
         {
-            _logger = logger;
-        }
+            Count = _context.Products.Count(),
+            Total = _context.Products.Sum(x => x.UnitPrice)
+        };
 
-        public IActionResult Index()
+        var model = new DashboardViewModels()
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+            ProductReportViewModel = productReportViewModel
+        };
+        return View(model);
     }
 }
