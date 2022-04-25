@@ -1,27 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+namespace AdminTemplate.ViewModels;
 
-namespace AdminTemplate.ViewModels
+public class LoginViewModel
 {
-    public class LoginViewModel
-    {
+    [Display(Name = "Kullanıcı Adı")]
+    [Required(ErrorMessage = "Kullanıcı adı alanı gereklidir.")]
+    public string UserName { get; set; }
 
-        [Display(Name = "Kullanıcı Adı")]
-        [Required(ErrorMessage = "Kullanıcı adı alanı gerekiyor")]
-        public string UserName { get; set; }
+    [Display(Name = "Şifre")]
+    [Required(ErrorMessage = "Şifre alanı gereklidir.")]
+    [StringLength(100, MinimumLength = 6, ErrorMessage = "Şifreniz minimum 6 karakterli olmalıdır!")]
+    [DataType(DataType.Password)]
+    public string Password { get; set; }
 
-        [Required(ErrorMessage = "Şifre alanı gerekiyor")]
-        [StringLength(100,MinimumLength =6,ErrorMessage="Şifreniz minimum 6 karakter olmalıdır")]
-        [Display(Name = "Şifre")]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
-
-
-        [Display(Name = "Beni Hatırla")]
-        public bool RememberMe { get; set; }
-
-    }
+    [Display(Name = "Beni Hatırla")]
+    public bool RememberMe { get; set; }
 }
-
-
-
