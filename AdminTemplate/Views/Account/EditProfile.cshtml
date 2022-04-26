@@ -111,7 +111,7 @@
         <div class="card">
             <div class="card-header"><h2 class="card-title">Change Password</h2></div>
             <div class="card-body">
-                <form class="form" asp-controller="Account" asp-action="ChangePassword">
+                <form class="form" asp-controller="Account" asp-action="ChangePassword"> 
                     @if (TempData["PassSuccess"] != null)
                     {
                             <div class="text text-success">@TempData["PassSuccess"]</div>
@@ -142,7 +142,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label class="form-label">Confirm <span class="d-none d-xl-inline">Password</span></label>
-                                        <input class="form-control"  placeholder="••••••">
+                                        <input class="form-control" asp-for="ChangePasswordVM.NewPasswordConfirm" placeholder="••••••">
                                     </div>
                                 </div>
                             </div>
