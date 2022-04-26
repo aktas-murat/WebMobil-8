@@ -278,54 +278,54 @@ public class AccountController : Controller
         return View(model);
     }
 
-    [Authorize, HttpPost]
-    public async Task<IActionResult> Profile(UserProfileViewModel model)
-    {
-        if (!ModelState.IsValid)
-            return View(model);
-        var user = await _userManager.FindByNameAsync(HttpContext.User.Identity!.Name);
-        user.Name = model.Name;
-        user.Surname = model.Surname;
+    //[Authorize, HttpPost]
+    //public async Task<IActionResult> Profile(UserProfileViewModel model)
+    //{
+    //    if (!ModelState.IsValid)
+    //        return View(model);
+    //    var user = await _userManager.FindByNameAsync(HttpContext.User.Identity!.Name);
+    //    user.Name = model.Name;
+    //    user.Surname = model.Surname;
 
-        bool isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-        if (!isAdmin && user.Email != model.Email)
-        {
-            await _userManager.RemoveFromRoleAsync(user, Roles.User);
-            await _userManager.AddToRoleAsync(user, Roles.Passive);
-            user.EmailConfirmed = false;
+    //    bool isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
+    //    if (!isAdmin && user.Email != model.Email)
+    //    {
+    //        await _userManager.RemoveFromRoleAsync(user, Roles.User);
+    //        await _userManager.AddToRoleAsync(user, Roles.Passive);
+    //        user.EmailConfirmed = false;
 
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code },
-                protocol: Request.Scheme);
+    //        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+    //        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+    //        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code },
+    //            protocol: Request.Scheme);
 
-            var emailMessage = new MailModel()
-            {
-                To = new List<EmailModel>
-                {
-                    new() { Adress = model.Email, Name = user.Name }
-                },
-                Body =
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here </a>.",
-                Subject = "Confirm your email"
-            };
-            await _emailService.SendMailAsync(emailMessage);
-        }
+    //        var emailMessage = new MailModel()
+    //        {
+    //            To = new List<EmailModel>
+    //            {
+    //                new() { Adress = model.Email, Name = user.Name }
+    //            },
+    //            Body =
+    //                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here </a>.",
+    //            Subject = "Confirm your email"
+    //        };
+    //        await _emailService.SendMailAsync(emailMessage);
+    //    }
 
-        user.Email = model.Email;
-        var result = await _userManager.UpdateAsync(user);
-        if (result.Succeeded)
-        {
-            ViewBag.Message = "Güncelleme başarılı";
-        }
-        else
-        {
-            var message = string.Join("<br>", result.Errors.Select(x => x.Description));
-            ViewBag.Message = message;
-        }
+    //    user.Email = model.Email;
+    //    var result = await _userManager.UpdateAsync(user);
+    //    if (result.Succeeded)
+    //    {
+    //        ViewBag.Message = "Güncelleme başarılı";
+    //    }
+    //    else
+    //    {
+    //        var message = string.Join("<br>", result.Errors.Select(x => x.Description));
+    //        ViewBag.Message = message;
+    //    }
 
-        return View(model);
-    }
+    //    return View(model);
+    //}
 
     [Authorize]
     [HttpGet]
@@ -428,7 +428,7 @@ public class AccountController : Controller
         if (!ModelState.IsValid)
         {
             TempData["PassError"] = "There has been an error.";
-            return RedirectToAction(nameof(Profile));
+            return RedirectToAction(nameof(EditProfile));
         }
 
         var name = HttpContext.User.Identity.Name;
@@ -446,7 +446,7 @@ public class AccountController : Controller
         }
 
 
-        return RedirectToAction(nameof(EditProfile));
+        return RedirectToAction("EditProfile","Account");
     }
 }
 
