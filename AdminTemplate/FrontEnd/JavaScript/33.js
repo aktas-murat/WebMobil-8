@@ -12,3 +12,9 @@ function BlueValue(){
     var blue = document.getElementById("range-blue").value;
     console.log("Blue: "+blue)
 }
+
+
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCnBDK9iDufYofxhksklBgDWOcyTsCKEMs&callback=initMap&libraries=places"
+
+
+AIzaSyD8r-bTE8Ou4bH2nU000o-MpwsEQpZNikQ&callback=initMap
