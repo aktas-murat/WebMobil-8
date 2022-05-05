@@ -2,39 +2,39 @@
  * Always set the map height explicitly to define the size of the div element
  * that contains the map. 
  */
- #map {
-    height: 400px;
-  }
-  
-  /* 
+#map {
+    height: 800px;
+}
+
+/* 
    * Optional: Makes the sample page fill the window. 
    */
-  html,
-  body {
+html,
+body {
     height: 100%;
     margin: 0;
     padding: 0;
-  }
-  
-  #description {
+}
+
+#description {
     font-family: Roboto;
     font-size: 15px;
     font-weight: 300;
-  }
-  
-  #infowindow-content .title {
+}
+
+#infowindow-content .title {
     font-weight: bold;
-  }
-  
-  #infowindow-content {
+}
+
+#infowindow-content {
     display: none;
-  }
-  
-  #map #infowindow-content {
+}
+
+#map #infowindow-content {
     display: inline;
-  }
-  
-  .pac-card {
+}
+
+.pac-card {
     background-color: #fff;
     border: 0;
     border-radius: 2px;
@@ -45,25 +45,25 @@
     overflow: hidden;
     font-family: Roboto;
     padding: 0;
-  }
-  
-  #pac-container {
+}
+
+#pac-container {
     padding-bottom: 12px;
     margin-right: 12px;
-  }
-  
-  .pac-controls {
+}
+
+.pac-controls {
     display: inline-block;
     padding: 5px 11px;
-  }
-  
-  .pac-controls label {
-    font-family: Roboto;
-    font-size: 13px;
-    font-weight: 300;
-  }
-  
-  #pac-input {
+}
+
+    .pac-controls label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+    }
+
+#pac-input {
     background-color: #fff;
     font-family: Roboto;
     font-size: 15px;
@@ -72,16 +72,22 @@
     padding: 0 11px 0 13px;
     text-overflow: ellipsis;
     width: 400px;
-  }
-  
-  #pac-input:focus {
-    border-color: #4d90fe;
-  }
-  
-  #title {
+}
+
+    #pac-input:focus {
+        border-color: #4d90fe;
+    }
+
+#title {
     color: #fff;
     background-color: #4d90fe;
     font-size: 25px;
     font-weight: 500;
     padding: 6px 12px;
-  }
+}
+
+.list-group-item:hover {
+    background-color: #4d90fe;
+    color: white;
+    transition: .5s ease-out;
+}
