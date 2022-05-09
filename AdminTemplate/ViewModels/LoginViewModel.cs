@@ -16,4 +16,7 @@ public class LoginViewModel
 
     [Display(Name = "Beni Hatırla")]
     public bool RememberMe { get; set; }
+
+    public string? ReturnUrl { get; set; }
+
 }
