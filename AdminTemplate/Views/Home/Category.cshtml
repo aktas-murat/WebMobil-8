@@ -80,6 +80,7 @@
             () => {
                 if ($("#switch").is(":checked")) {
                     $("#cardListCategory").attr("class", "col-md-6");
+
                     $("#formCategory").trigger("reset");
                     $("#cardAddCategory").slideDown(750);
                 } else {
@@ -114,7 +115,9 @@
             }).fail(response => {
                 toastr["error"]("Kategori Ekleme", response.responseJSON.message);
             });
+
         });
+
         $("#formUpdateCategory").submit(e => {
             e.preventDefault();
             var data = {
@@ -122,6 +125,7 @@
                 description: $("#txtUpdateDescription").val(),
                 id: $("#txtUpdateCategoryId").val()
             };
+
             $.ajax({
                 url: "../../api/categoryapi/update/" + data.id,
                 method: "PUT",
@@ -145,6 +149,7 @@
             "url": "../../api/categoryapi/all",
             "method": "GET"
         };
+
         $.ajax(settings).done(function(response) {
             //console.log(response);
             addToList(response);
@@ -159,9 +164,11 @@
             li.html(`${category.name} - ${category.description}`);
             //ul.append(li);
             li.appendTo(ul);
+
             const div = $("<div>");
             div.css("float", "right");
             const btnUpdate = $(`<input type='button' value='Güncelle' class='btn btn-primary' data-id='${category.id}' />`);
+
             btnUpdate.on("click",
                 () => {
                     const id = $(btnUpdate).attr("data-id");
@@ -177,11 +184,14 @@
                         $("#txtUpdateCategoryId").val(response.id);
                         $("#cardUpdateCategory").slideDown(750);
                         $("#cardListCategory").attr("class", "col-md-6");
+
                     }).fail((error) => {
                         console.log(error.responseJSON.message);
                     });
                 });
+
             const btnDelete = $(`<input type='button' value='Sil' class='btn btn-danger' data-id='${category.id}' />`);
+
             btnDelete.on("click",
                 () => {
                     const id = $(btnDelete).attr("data-id");
@@ -196,6 +206,7 @@
                         //console.log(result);
                         if (result.isConfirmed) {
                             //ajax silme işlemi yapılacak
+
                             $.ajax({
                                 url: `../../api/categoryapi/delete/${id}`,
                                 method: "DELETE"
@@ -212,9 +223,12 @@
                         }
                     });
                 });
+
             div.append(btnUpdate).append(btnDelete).appendTo(li);
+
         });
     }
+
     toastr.options = {
         "closeButton": false,
         "debug": false,
