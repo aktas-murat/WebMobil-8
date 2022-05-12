@@ -9,5 +9,6 @@ public class ProductRepo : RepositoryBase<Product, Guid>
 {
     public ProductRepo(MyContext context) : base(context)
     {
+
     }
 }
