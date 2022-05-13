@@ -8,7 +8,6 @@ namespace AdminTemplate.BusinessLogic.Repository
     {
         public CategoryRepo(MyContext context) : base(context)
         {
-
         }
     }
 }

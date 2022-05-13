@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication1", "WebAppli
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "6.Gün", "6.Gün", "{467CA428-CD13-4977-8CFB-967C75B0D5CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminTemplate", "AdminTemplate\AdminTemplate.csproj", "{9F017892-3ACB-43DB-BD82-E597CF52C377}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminTemplate", "AdminTemplate\AdminTemplate.csproj", "{9F017892-3ACB-43DB-BD82-E597CF52C377}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
