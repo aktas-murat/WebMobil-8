@@ -16,6 +16,7 @@ builder.Services.AddScoped<IRepository<Category, int>, CategoryRepo>();
 builder.Services.AddScoped<IRepository<Product, int>, ProductRepo>();
 builder.Services.AddScoped<IRepository<Order, int>, OrderRepo>();
 
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
